@@ -7,51 +7,53 @@ export default function WelcomeEmail({
   buttonText = "Get Started",
   buttonLink = "#",
   primaryColor = "#0070f3",
-  backgroundColor = "#ffffff",
-  textColor = "#333333"
-}) {
+  theme = "dark"
+}: any) {
+  const isDark = theme === 'dark';
+
   const styles = {
     container: {
       fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
-      backgroundColor: "#f5f5f5",
+      backgroundColor: isDark ? "#0f172a" : "#f5f5f5",
       padding: "40px 20px",
       textAlign: "center" as const,
     },
     card: {
-      backgroundColor: backgroundColor,
+      backgroundColor: isDark ? "#1e293b" : "#ffffff",
       padding: "40px",
-      borderRadius: "8px",
+      borderRadius: "12px",
       maxWidth: "600px",
       margin: "0 auto",
-      boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-      color: textColor,
+      boxShadow: isDark ? "0 4px 20px rgba(0,0,0,0.4)" : "0 2px 4px rgba(0,0,0,0.1)",
+      color: isDark ? "#e2e8f0" : "#333333",
+      border: isDark ? "1px solid rgba(255,255,255,0.05)" : "none",
     },
     heading: {
       fontSize: "24px",
-      fontWeight: "bold",
+      fontWeight: "bold" as const,
       marginBottom: "20px",
-      color: "#111111",
+      color: isDark ? "#f1f5f9" : "#111111",
     },
     text: {
       fontSize: "16px",
       lineHeight: "1.6",
       marginBottom: "30px",
-      color: textColor,
+      color: isDark ? "#94a3b8" : "#333333",
     },
     button: {
-      display: "inline-block",
+      display: "inline-block" as const,
       backgroundColor: primaryColor,
       color: "#ffffff",
       padding: "12px 24px",
-      borderRadius: "4px",
+      borderRadius: "6px",
       textDecoration: "none",
-      fontWeight: "bold",
+      fontWeight: "bold" as const,
       fontSize: "16px",
     },
     footer: {
       marginTop: "30px",
       fontSize: "12px",
-      color: "#888888",
+      color: isDark ? "#475569" : "#888888",
     }
   };
 

@@ -35,7 +35,7 @@ export default function Home() {
   // When template changes, reset props and fetch default render
   useEffect(() => {
     if (selectedTemplate) {
-      let defaultProps = {};
+      let defaultProps: any = {};
       if (selectedTemplate === 'enigma.tsx') {
         defaultProps = {
           heading: 'New Feature Launch',
@@ -52,7 +52,8 @@ export default function Home() {
           body: 'Check out our latest updates.',
           buttonText: 'Get Started',
           buttonLink: 'https://example.com',
-          primaryColor: '#06b6d4'
+          primaryColor: '#06b6d4',
+          theme: 'dark'
         };
       }
       setTemplateProps(defaultProps);
@@ -62,31 +63,37 @@ export default function Home() {
 
   const handlePropsChange = (newProps: any) => {
     setTemplateProps(newProps);
-    // Debounce rendering here if needed, or render on blur/submit
-    // For now, let's render on change with a small timeout or just direct?
-    // Direct might be too heavy. Let's trigger render manually or debounce.
-    // For simplicity, let's debounce in the Editor component or here.
     const timeoutId = setTimeout(() => {
       if (selectedTemplate) handleRender(selectedTemplate, newProps);
-    }, 50);
+    }, 500);
     return () => clearTimeout(timeoutId);
   };
 
   return (
-    <main className="flex h-screen bg-gray-50 text-gray-900">
-      <Toaster position="top-right" />
+    <main className="flex h-screen overflow-hidden pattern-bg">
+      <Toaster
+        position="top-right"
+        theme="dark"
+        toastOptions={{
+          style: {
+            background: '#1a1a24',
+            border: '1px solid #27272f',
+            color: '#e4e4e7',
+          },
+        }}
+      />
 
-      {/* Sidebar - Template List */}
+      {/* Sidebar */}
       <Sidebar
         selectedTemplate={selectedTemplate}
         onSelect={setSelectedTemplate}
       />
 
-      {/* Main Content Area */}
+      {/* Main Content */}
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
 
-        {/* Editor Panel - Center/Left input */}
-        <div className="w-full md:w-1/3 border-r border-gray-200 bg-white p-6 overflow-y-auto">
+        {/* Editor Panel */}
+        <div className="w-full md:w-[340px] border-r border-border p-5 overflow-y-auto" style={{ background: 'rgba(13, 13, 20, 0.9)' }}>
           <Editor
             selectedTemplate={selectedTemplate}
             props={templateProps}
@@ -94,8 +101,8 @@ export default function Home() {
           />
         </div>
 
-        {/* Preview Panel - Right output */}
-        <div className="w-full md:w-2/3 bg-gray-100 p-8 overflow-y-auto flex flex-col items-center justify-center">
+        {/* Preview Panel */}
+        <div className="w-full md:flex-1 p-6 overflow-y-auto" style={{ background: '#08080d' }}>
           <Preview
             html={htmlOutput}
             loading={loading}
