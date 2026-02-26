@@ -2,25 +2,31 @@ import React from 'react';
 
 export const TransactionalTemplate = ({
   headline = 'Payment Confirmation',
-  body = 'Your payment of $49.00 has been successfully processed. Thank you for your business. A receipt is attached below for your records.',
+  body = 'Your payment has been successfully processed. Thank you for your business. A receipt is attached below for your records.',
   buttonText = 'View Invoice',
   buttonLink = 'https://example.com/invoice',
-  theme = 'dark'
+  theme = 'dark',
+  primaryColor = '#10b981',
+  headingAlign = 'center',
+  bodyAlign = 'center',
+  invoiceId = '#INV-2024-001',
+  invoiceDate = 'October 24, 2024',
+  totalAmount = '$49.00'
 }: any) => {
   const isDark = theme === 'dark';
 
   const colors = {
-    outerBg: isDark ? '#0f172a' : '#ffffff',
-    cardBg: isDark ? '#1e293b' : '#ffffff',
+    outerBg: isDark ? '#09090b' : '#ffffff',
+    cardBg: isDark ? '#111113' : '#ffffff',
     cardBorder: isDark ? 'rgba(255,255,255,0.08)' : '#e5e7eb',
     headingColor: isDark ? '#f1f5f9' : '#111827',
     textColor: isDark ? '#94a3b8' : '#374151',
-    detailBg: isDark ? '#0f172a' : '#f9fafb',
+    detailBg: isDark ? '#09090b' : '#f9fafb',
     detailBorder: isDark ? 'rgba(255,255,255,0.05)' : '#f3f4f6',
     labelColor: isDark ? '#64748b' : '#6b7280',
     valueColor: isDark ? '#e2e8f0' : '#111827',
-    accentColor: '#10b981',
-    buttonBg: isDark ? '#10b981' : '#111827',
+    accentColor: primaryColor,
+    buttonBg: isDark ? primaryColor : '#111827',
     buttonText: '#ffffff',
     footerText: isDark ? '#475569' : '#6b7280',
     legalText: isDark ? '#334155' : '#9ca3af',
@@ -36,7 +42,7 @@ export const TransactionalTemplate = ({
 
               {/* Logo Area */}
               <tr>
-                <td style={{ padding: '30px 30px 0 30px' }}>
+                <td style={{ padding: '30px 30px 0 30px', textAlign: headingAlign }}>
                   <div style={{ width: '40px', height: '40px', borderRadius: '8px', backgroundColor: colors.accentColor, display: 'inline-block' }}></div>
                   <span style={{ fontSize: '20px', fontWeight: 'bold', color: colors.headingColor, verticalAlign: 'super', marginLeft: '10px' }}>Acme Corp</span>
                 </td>
@@ -45,10 +51,10 @@ export const TransactionalTemplate = ({
               {/* Main Content */}
               <tr>
                 <td style={{ padding: '30px 30px 20px 30px' }}>
-                  <h1 style={{ margin: '0 0 20px 0', fontSize: '24px', color: colors.headingColor, fontWeight: 'bold' }}>
+                  <h1 style={{ margin: '0 0 20px 0', fontSize: '24px', color: colors.headingColor, fontWeight: 'bold', textAlign: headingAlign }}>
                     {headline}
                   </h1>
-                  <p style={{ margin: '0 0 20px 0', fontSize: '16px', lineHeight: '1.5', color: colors.textColor }}>
+                  <p style={{ margin: '0 0 20px 0', fontSize: '16px', lineHeight: '1.5', color: colors.textColor, textAlign: bodyAlign }}>
                     {body}
                   </p>
 
@@ -59,30 +65,37 @@ export const TransactionalTemplate = ({
                         <table width="100%" cellPadding="0" cellSpacing="0" border={0}>
                           <tr>
                             <td style={{ fontSize: '14px', color: colors.labelColor, paddingBottom: '5px' }}>Invoice ID</td>
-                            <td align="right" style={{ fontSize: '14px', color: colors.valueColor, fontWeight: '500' }}>#INV-2024-001</td>
+                            <td align="right" style={{ fontSize: '14px', color: colors.valueColor, fontWeight: '500' }}>{invoiceId}</td>
                           </tr>
                           <tr>
                             <td style={{ fontSize: '14px', color: colors.labelColor, paddingBottom: '5px' }}>Date</td>
-                            <td align="right" style={{ fontSize: '14px', color: colors.valueColor, fontWeight: '500' }}>October 24, 2024</td>
+                            <td align="right" style={{ fontSize: '14px', color: colors.valueColor, fontWeight: '500' }}>{invoiceDate}</td>
                           </tr>
                           <tr>
                             <td style={{ fontSize: '14px', color: colors.labelColor, paddingTop: '10px', borderTop: `1px solid ${colors.borderTop}` }}>Total Amount</td>
-                            <td align="right" style={{ fontSize: '18px', color: colors.accentColor, fontWeight: 'bold', paddingTop: '10px', borderTop: `1px solid ${colors.borderTop}` }}>$49.00</td>
+                            <td align="right" style={{ fontSize: '18px', color: colors.accentColor, fontWeight: 'bold', paddingTop: '10px', borderTop: `1px solid ${colors.borderTop}` }}>{totalAmount}</td>
                           </tr>
                         </table>
                       </td>
                     </tr>
                   </table>
 
-                  <table width="100%" cellPadding="0" cellSpacing="0" border={0}>
-                    <tr>
-                      <td align="center">
-                        <a href={buttonLink} style={{ display: 'block', width: '100%', boxSizing: 'border-box' as const, textAlign: 'center', padding: '14px 20px', background: colors.buttonBg, color: colors.buttonText, textDecoration: 'none', borderRadius: '6px', fontWeight: '600', fontSize: '16px' }}>
-                          {buttonText}
-                        </a>
-                      </td>
-                    </tr>
-                  </table>
+                  {/* Button Section */}
+                  <div style={{ textAlign: bodyAlign as any, width: '100%' }}>
+                    <a href={buttonLink} style={{
+                      display: 'inline-block',
+                      padding: '14px 24px',
+                      background: colors.buttonBg,
+                      color: colors.buttonText,
+                      textDecoration: 'none',
+                      borderRadius: '6px',
+                      fontWeight: '600',
+                      fontSize: '16px',
+                      boxSizing: 'border-box'
+                    }}>
+                      {buttonText}
+                    </a>
+                  </div>
                 </td>
               </tr>
 

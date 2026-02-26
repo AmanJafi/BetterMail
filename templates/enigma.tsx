@@ -8,6 +8,9 @@ interface EnigmaTemplateProps {
   ctaUrl?: string;
   logoUrl?: string;
   theme?: 'light' | 'dark';
+  primaryColor?: string;
+  headingAlign?: 'left' | 'center' | 'right';
+  bodyAlign?: 'left' | 'center' | 'right';
 }
 
 export const EnigmaTemplate = ({
@@ -18,18 +21,24 @@ export const EnigmaTemplate = ({
   ctaUrl = 'https://example.com',
   logoUrl = '/logo.jpeg',
   theme = 'dark',
+  primaryColor,
+  headingAlign = 'center',
+  bodyAlign = 'left',
 }: EnigmaTemplateProps) => {
   const isDark = theme === 'dark';
 
+  // Use primaryColor prop if provided, otherwise fallback to theme defaults
+  const accent = primaryColor || (isDark ? '#ffffff' : '#000000');
+
   const themeStyles = {
-    bodyBg: isDark ? '#0f172a' : '#f8fafc',
-    containerBg: isDark ? '#000000' : '#ffffff',
-    borderColor: isDark ? 'rgba(6, 182, 212, 0.3)' : 'rgba(6, 182, 212, 0.2)',
-    headingColor: '#06b6d4',
-    textColor: isDark ? '#cbd5e1' : '#475569',
-    dividerColor: '#06b6d4',
-    footerBg: isDark ? '#000000' : '#f1f5f9',
-    footerText: isDark ? '#6b7280' : '#94a3b8',
+    bodyBg: isDark ? '#09090b' : '#f8fafc',
+    containerBg: isDark ? '#111113' : '#ffffff',
+    borderColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
+    headingColor: accent,
+    textColor: isDark ? '#a1a1aa' : '#475569',
+    dividerColor: isDark ? '#27272a' : '#e2e8f0',
+    footerBg: isDark ? '#0c0c0e' : '#f1f5f9',
+    footerText: isDark ? '#52525b' : '#94a3b8',
     buttonText: isDark ? '#000000' : '#ffffff',
   };
 
@@ -56,9 +65,7 @@ export const EnigmaTemplate = ({
                   backgroundColor: themeStyles.containerBg,
                   borderRadius: '12px',
                   overflow: 'hidden',
-                  boxShadow: isDark ? '0 10px 30px rgba(0,0,0,0.5)' : '0 10px 30px rgba(0,0,0,0.05)',
                   border: `1px solid ${themeStyles.borderColor}`,
-                  transition: 'all 0.3s ease',
                 }}>
                   <tbody>
                     {/* Header with Logo */}
@@ -94,7 +101,7 @@ export const EnigmaTemplate = ({
                           margin: '0 0 24px 0',
                           fontSize: '32px',
                           color: themeStyles.headingColor,
-                          textAlign: 'center',
+                          textAlign: headingAlign,
                           fontWeight: '800',
                           letterSpacing: '-0.025em',
                         }}>
@@ -106,6 +113,7 @@ export const EnigmaTemplate = ({
                           fontSize: '18px',
                           lineHeight: '1.6',
                           color: themeStyles.textColor,
+                          textAlign: bodyAlign,
                         }}>
                           {announcement}
                         </p>
@@ -115,7 +123,7 @@ export const EnigmaTemplate = ({
                           fontSize: '16px',
                           lineHeight: '1.6',
                           color: themeStyles.textColor,
-                          opacity: 0.8,
+                          textAlign: bodyAlign,
                         }}>
                           {details}
                         </p>
@@ -124,7 +132,7 @@ export const EnigmaTemplate = ({
                         <table width="100%" cellPadding="0" cellSpacing="0">
                           <tbody>
                             <tr>
-                              <td align="center">
+                              <td align={bodyAlign === 'center' ? 'center' : bodyAlign === 'right' ? 'right' : 'left'}>
                                 <a href={ctaUrl} style={{
                                   display: 'inline-block',
                                   padding: '16px 48px',
@@ -134,8 +142,6 @@ export const EnigmaTemplate = ({
                                   borderRadius: '10px',
                                   fontWeight: '700',
                                   fontSize: '16px',
-                                  boxShadow: `0 10px 20px rgba(6, 182, 212, ${isDark ? '0.4' : '0.2'})`,
-                                  transition: 'transform 0.2s ease',
                                 }}>
                                   {ctaText}
                                 </a>

@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Type, PaintBucket, SunMoon } from 'lucide-react';
+import { Type, PaintBucket, Sun, Moon, SunMoon, AlignLeft, AlignCenter, AlignRight, Layout, List } from 'lucide-react';
 
 interface EditorProps {
   selectedTemplate: string | null;
@@ -10,7 +10,7 @@ interface EditorProps {
 interface FieldConfig {
   id: string;
   label: string;
-  type: 'text' | 'textarea' | 'color' | 'select' | 'toggle';
+  type: 'text' | 'textarea' | 'color' | 'select' | 'toggle' | 'alignment';
   options?: string[];
   placeholder?: string;
   halfWidth?: boolean;
@@ -26,6 +26,8 @@ export default function Editor({ selectedTemplate, props, onChange }: EditorProp
 
     const defaultFields: FieldConfig[] = [
       { id: 'headline', label: 'Headline', type: 'text', placeholder: 'Welcome...' },
+      { id: 'headingAlign', label: 'Headline Align', type: 'alignment', options: ['left', 'center', 'right'], halfWidth: true },
+      { id: 'bodyAlign', label: 'Body Align', type: 'alignment', options: ['left', 'center', 'right'], halfWidth: true },
       { id: 'body', label: 'Body Text', type: 'textarea', placeholder: 'Main content...' },
       { id: 'buttonText', label: 'Button Text', type: 'text', placeholder: 'Click Me', halfWidth: true },
       { id: 'buttonLink', label: 'Button Link', type: 'text', placeholder: 'https://...', halfWidth: true },
@@ -35,6 +37,8 @@ export default function Editor({ selectedTemplate, props, onChange }: EditorProp
 
     const enigmaFields: FieldConfig[] = [
       { id: 'heading', label: 'Headline', type: 'text', placeholder: 'New Feature...' },
+      { id: 'headingAlign', label: 'Headline Align', type: 'alignment', options: ['left', 'center', 'right'], halfWidth: true },
+      { id: 'bodyAlign', label: 'Text Align', type: 'alignment', options: ['left', 'center', 'right'], halfWidth: true },
       { id: 'announcement', label: 'Announcement', type: 'textarea', placeholder: 'Exciting news...' },
       { id: 'details', label: 'Details', type: 'textarea', placeholder: 'More info...' },
       { id: 'ctaText', label: 'Button Text', type: 'text', placeholder: 'Learn More', halfWidth: true },
@@ -43,59 +47,105 @@ export default function Editor({ selectedTemplate, props, onChange }: EditorProp
       { id: 'theme', label: 'Email Theme', type: 'toggle', options: ['light', 'dark'] },
     ];
 
+    const newsletterFields: FieldConfig[] = [
+      { id: 'mainTitle', label: 'Header Title', type: 'text', placeholder: 'The Weekly Insider' },
+      { id: 'issueInfo', label: 'Issue Label', type: 'text', placeholder: 'ISSUE #42', halfWidth: true },
+      { id: 'primaryColor', label: 'Brand Color', type: 'color', halfWidth: true },
+      { id: 'headingAlign', label: 'Heading Align', type: 'alignment', options: ['left', 'center', 'right'], halfWidth: true },
+      { id: 'bodyAlign', label: 'Content Align', type: 'alignment', options: ['left', 'center', 'right'], halfWidth: true },
+      { id: 'headline', label: 'Headline', type: 'text' },
+      { id: 'body', label: 'Main Content', type: 'textarea' },
+      { id: 'extraSectionTitle', label: 'Secondary Section Title', type: 'text', placeholder: 'In Case You Missed It' },
+      { id: 'extraContent', label: 'Secondary Details (One per line)', type: 'textarea', placeholder: 'Add stories or notes here...' },
+      { id: 'buttonText', label: 'Button Text', type: 'text', halfWidth: true },
+      { id: 'buttonLink', label: 'Button Link', type: 'text', halfWidth: true },
+      { id: 'theme', label: 'Email Theme', type: 'toggle', options: ['light', 'dark'] },
+    ];
+
+    const transactionalFields: FieldConfig[] = [
+      { id: 'headline', label: 'Headline', type: 'text', placeholder: 'Payment Confirmation' },
+      { id: 'headingAlign', label: 'Headline Align', type: 'alignment', options: ['left', 'center', 'right'], halfWidth: true },
+      { id: 'bodyAlign', label: 'Body Align', type: 'alignment', options: ['left', 'center', 'right'], halfWidth: true },
+      { id: 'body', label: 'Body Text', type: 'textarea', placeholder: 'Main content...' },
+      { id: 'invoiceId', label: 'Invoice ID', type: 'text', placeholder: '#INV-2024-001', halfWidth: true },
+      { id: 'invoiceDate', label: 'Invoice Date', type: 'text', placeholder: 'Oct 24, 2024', halfWidth: true },
+      { id: 'totalAmount', label: 'Total Amount', type: 'text', placeholder: '$49.00' },
+      { id: 'buttonText', label: 'Button Text', type: 'text', placeholder: 'View Invoice', halfWidth: true },
+      { id: 'buttonLink', label: 'Button Link', type: 'text', placeholder: 'https://...', halfWidth: true },
+      { id: 'primaryColor', label: 'Primary Color', type: 'color' },
+      { id: 'theme', label: 'Email Theme', type: 'toggle', options: ['light', 'dark'] },
+    ];
+
     if (selectedTemplate === 'enigma.tsx') return enigmaFields;
+    if (selectedTemplate === 'newsletter.tsx') return newsletterFields;
+    if (selectedTemplate === 'transactional.tsx') return transactionalFields;
     return defaultFields;
   }, [selectedTemplate]);
 
   if (!selectedTemplate) {
     return (
-      <div className="flex flex-col items-center justify-center h-full space-y-4 fade-in">
-        <div className="w-16 h-16 rounded-2xl glass flex items-center justify-center">
-          <SunMoon className="h-7 w-7 text-zinc-600" />
-        </div>
+      <div className="flex flex-col items-center justify-center h-full space-y-3 fade-in">
+        <SunMoon className="h-8 w-8 text-zinc-700" />
         <div className="text-center">
-          <p className="text-zinc-400 text-sm font-medium">No template selected</p>
-          <p className="text-zinc-600 text-xs mt-1">Pick one from the sidebar to start editing</p>
+          <p className="text-zinc-500 text-sm">No template selected</p>
+          <p className="text-zinc-700 text-xs mt-1">Pick one from the sidebar</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-7 fade-in">
-      <div>
-        <h2 className="text-base font-bold text-white mb-0.5 tracking-tight">Edit Content</h2>
-        <p className="text-xs text-zinc-500">Customize your email template.</p>
+    <div className="space-y-6 fade-in h-full pb-10">
+      <div className="flex flex-col">
+        <h2 className="text-sm font-semibold text-zinc-200 mb-0.5">Edit Content</h2>
+        <p className="text-xs text-zinc-600">Customize your email template.</p>
       </div>
 
-      <div className="space-y-6">
+      <div className="space-y-5">
         {/* Content Section */}
-        <div className="space-y-4">
-          <div className="flex items-center space-x-2 text-xs font-semibold text-zinc-400 uppercase tracking-wider">
-            <Type className="h-3.5 w-3.5 text-primary" />
-            <span>Content & Text</span>
+        <div className="space-y-3">
+          <div className="flex items-center space-x-2 text-[10px] font-medium text-zinc-600 uppercase tracking-widest">
+            <Type className="h-3 w-3" />
+            <span>Content</span>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            {templateFields.filter(f => f.type === 'text' || f.type === 'textarea').map((field) => (
+          <div className="grid grid-cols-2 gap-x-2.5 gap-y-4">
+            {templateFields.filter(f => f.type === 'text' || f.type === 'textarea' || f.type === 'alignment').map((field) => (
               <div key={field.id} className={field.halfWidth ? 'col-span-1' : 'col-span-2'}>
-                <label className="block text-[11px] font-medium text-zinc-500 uppercase mb-1.5 tracking-wide">{field.label}</label>
+                <label className="block text-[10px] font-medium text-zinc-600 uppercase mb-1.5 tracking-wide">{field.label}</label>
 
                 {field.type === 'textarea' ? (
                   <textarea
                     value={props[field.id] || ''}
                     onChange={(e) => handleChange(field.id, e.target.value)}
-                    rows={field.id === 'body' || field.id === 'announcement' ? 4 : 2}
+                    rows={field.id === 'extraContent' ? 5 : (field.id === 'body' || field.id === 'announcement' ? 3 : 2)}
                     placeholder={field.placeholder}
-                    className="w-full px-3 py-2.5 border border-border rounded-xl text-sm text-zinc-200 bg-muted/50 transition-smooth focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/30 focus:bg-muted placeholder:text-zinc-600 resize-none"
+                    className="w-full px-2.5 py-2 border border-border rounded-lg text-[13px] text-zinc-300 bg-white/[0.02] transition-smooth focus:outline-none focus:ring-1 focus:ring-zinc-600 focus:border-zinc-600 placeholder:text-zinc-700 resize-none"
                   />
+                ) : field.type === 'alignment' ? (
+                  <div className="flex p-0.5 rounded-lg bg-white/[0.03] border border-border w-full">
+                    {field.options?.map((opt) => (
+                      <button
+                        key={opt}
+                        onClick={() => handleChange(field.id, opt)}
+                        className={`flex-1 flex items-center justify-center py-1.5 rounded-md transition-smooth ${(props[field.id] || (field.id === 'headingAlign' ? 'center' : 'left')) === opt
+                            ? 'bg-white text-black'
+                            : 'text-zinc-600 hover:text-zinc-400'
+                          }`}
+                      >
+                        {opt === 'left' && <AlignLeft className="h-3.5 w-3.5" />}
+                        {opt === 'center' && <AlignCenter className="h-3.5 w-3.5" />}
+                        {opt === 'right' && <AlignRight className="h-3.5 w-3.5" />}
+                      </button>
+                    ))}
+                  </div>
                 ) : (
                   <input
                     type="text"
                     value={props[field.id] || ''}
                     onChange={(e) => handleChange(field.id, e.target.value)}
                     placeholder={field.placeholder}
-                    className="w-full px-3 py-2.5 border border-border rounded-xl text-sm text-zinc-200 bg-muted/50 transition-smooth focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/30 focus:bg-muted placeholder:text-zinc-600"
+                    className="w-full px-2.5 py-2 border border-border rounded-lg text-[13px] text-zinc-300 bg-white/[0.02] transition-smooth focus:outline-none focus:ring-1 focus:ring-zinc-600 focus:border-zinc-600 placeholder:text-zinc-700"
                   />
                 )}
               </div>
@@ -105,28 +155,28 @@ export default function Editor({ selectedTemplate, props, onChange }: EditorProp
 
         <div className="h-px bg-border" />
 
-        {/* Theme Toggle - for all templates */}
+        {/* Theme Toggle */}
         {templateFields.some(f => f.type === 'toggle') && (
-          <div className="space-y-4">
-            <div className="flex items-center space-x-2 text-xs font-semibold text-zinc-400 uppercase tracking-wider">
-              <SunMoon className="h-3.5 w-3.5 text-primary" />
+          <div className="space-y-3">
+            <div className="flex items-center space-x-2 text-[10px] font-medium text-zinc-600 uppercase tracking-widest">
+              <SunMoon className="h-3 w-3" />
               <span>Theme</span>
             </div>
 
             {templateFields.filter(f => f.type === 'toggle').map((field) => (
               <div key={field.id}>
-                <label className="block text-[11px] font-medium text-zinc-500 uppercase mb-2 tracking-wide">{field.label}</label>
-                <div className="flex p-1 rounded-xl bg-muted/70 border border-border w-fit">
+                <div className="flex p-0.5 rounded-lg bg-white/[0.03] border border-border w-fit">
                   {field.options?.map((opt) => (
                     <button
                       key={opt}
                       onClick={() => handleChange(field.id, opt)}
-                      className={`px-5 py-2 text-xs font-bold rounded-lg transition-smooth ${(props[field.id] || 'dark') === opt
-                          ? 'bg-primary text-white shadow-lg shadow-primary/25'
-                          : 'text-zinc-500 hover:text-zinc-300'
+                      className={`flex items-center space-x-1.5 px-4 py-1.5 text-xs font-medium rounded-md transition-smooth ${(props[field.id] || 'dark') === opt
+                          ? 'bg-white text-black'
+                          : 'text-zinc-600 hover:text-zinc-400'
                         }`}
                     >
-                      {opt === 'light' ? '☀️ ' : '🌙 '}{opt.toUpperCase()}
+                      {opt === 'light' ? <Sun className="h-3 w-3" /> : <Moon className="h-3 w-3" />}
+                      <span>{opt.charAt(0).toUpperCase() + opt.slice(1)}</span>
                     </button>
                   ))}
                 </div>
@@ -139,31 +189,29 @@ export default function Editor({ selectedTemplate, props, onChange }: EditorProp
         {templateFields.some(f => f.type === 'color') && (
           <>
             <div className="h-px bg-border" />
-            <div className="space-y-4">
-              <div className="flex items-center space-x-2 text-xs font-semibold text-zinc-400 uppercase tracking-wider">
-                <PaintBucket className="h-3.5 w-3.5 text-primary" />
+            <div className="space-y-3">
+              <div className="flex items-center space-x-2 text-[10px] font-medium text-zinc-600 uppercase tracking-widest">
+                <PaintBucket className="h-3 w-3" />
                 <span>Colors</span>
               </div>
 
-              <div className="grid grid-cols-1 gap-4">
+              <div className="grid grid-cols-1 gap-3">
                 {templateFields.filter(f => f.type === 'color').map((field) => (
-                  <div key={field.id} className="space-y-1.5">
-                    <label className="text-[11px] font-medium text-zinc-500 uppercase tracking-wide">{field.label}</label>
-                    <div className="flex items-center space-x-3">
-                      <div className="relative group">
-                        <input
-                          type="color"
-                          value={props[field.id] || (field.id === 'primaryColor' ? '#06b6d4' : field.id === 'backgroundColor' ? '#ffffff' : '#111827')}
-                          onChange={(e) => handleChange(field.id, e.target.value)}
-                          className="h-10 w-10 rounded-xl overflow-hidden border-2 border-border cursor-pointer transition-smooth group-hover:border-primary/40 p-0"
-                        />
-                      </div>
+                  <div key={field.id} className="space-y-1">
+                    <label className="text-[10px] font-medium text-zinc-600 uppercase tracking-wide">{field.label}</label>
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="color"
+                        value={props[field.id] || (field.id === 'primaryColor' ? '#4f46e5' : '#ffffff')}
+                        onChange={(e) => handleChange(field.id, e.target.value)}
+                        className="h-8 w-8 rounded-lg overflow-hidden border border-border cursor-pointer transition-smooth hover:border-zinc-500 p-0"
+                      />
                       <input
                         type="text"
                         value={props[field.id] || ''}
                         onChange={(e) => handleChange(field.id, e.target.value)}
                         placeholder="#000000"
-                        className="flex-1 px-3 py-2.5 border border-border rounded-xl text-sm font-mono bg-muted/50 text-zinc-300 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/30 transition-smooth uppercase placeholder:text-zinc-600"
+                        className="flex-1 px-2.5 py-1.5 border border-border rounded-lg text-xs font-mono bg-white/[0.02] text-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-600 transition-smooth uppercase placeholder:text-zinc-700"
                       />
                     </div>
                   </div>

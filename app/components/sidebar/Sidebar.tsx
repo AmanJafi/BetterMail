@@ -2,7 +2,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Mail, FileText, BookOpen, Sparkles } from 'lucide-react';
+import { Mail, FileText, BookOpen, Megaphone, Gem, Newspaper, CreditCard, HandMetal } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { templateNames } from '@/app/lib/templates-registry';
@@ -10,15 +10,15 @@ import { templateNames } from '@/app/lib/templates-registry';
 interface Template {
   id: string;
   name: string;
-  icon: string;
+  icon: React.ReactNode;
 }
 
-const templateIcons: Record<string, string> = {
-  announcement: '📢',
-  enigma: '🔮',
-  newsletter: '📰',
-  transactional: '💳',
-  welcome: '👋',
+const templateIconMap: Record<string, React.ReactNode> = {
+  announcement: <Megaphone className="h-4 w-4" />,
+  enigma: <Gem className="h-4 w-4" />,
+  newsletter: <Newspaper className="h-4 w-4" />,
+  transactional: <CreditCard className="h-4 w-4" />,
+  welcome: <HandMetal className="h-4 w-4" />,
 };
 
 export default function Sidebar({
@@ -34,64 +34,58 @@ export default function Sidebar({
       return {
         id: name,
         name: baseName.charAt(0).toUpperCase() + baseName.slice(1),
-        icon: templateIcons[baseName] || '📄',
+        icon: templateIconMap[baseName] || <FileText className="h-4 w-4" />,
       };
     })
   );
 
   return (
-    <div className="w-72 flex flex-col h-full border-r border-border" style={{ background: 'linear-gradient(180deg, #0d0d14 0%, #0a0a0f 100%)' }}>
+    <div className="w-64 flex flex-col h-full border-r border-border bg-[#0c0c0e]">
       {/* Logo */}
       <div className="p-5 border-b border-border">
-        <div className="flex items-center space-x-3">
-          <div className="w-9 h-9 rounded-xl flex items-center justify-center glow-purple" style={{ background: 'linear-gradient(135deg, #8b5cf6, #6d28d9)' }}>
-            <Mail className="h-4 w-4 text-white" />
+        <div className="flex items-center space-x-2.5">
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-white">
+            <Mail className="h-4 w-4 text-black" />
           </div>
           <div>
-            <h1 className="font-bold text-base text-white tracking-tight">Email Maker</h1>
-            <p className="text-[11px] text-muted-foreground">React → Gmail HTML</p>
+            <h1 className="font-semibold text-sm text-white tracking-tight">Email Maker</h1>
+            <p className="text-[10px] text-zinc-600">React → Gmail</p>
           </div>
         </div>
       </div>
 
       {/* Templates */}
-      <div className="flex-1 overflow-y-auto p-4">
-        <div className="flex items-center space-x-2 mb-4">
-          <Sparkles className="h-3.5 w-3.5 text-primary" />
-          <h2 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">Templates</h2>
-        </div>
+      <div className="flex-1 overflow-y-auto p-3">
+        <h2 className="text-[10px] font-medium text-zinc-600 uppercase tracking-widest mb-3 px-2">Templates</h2>
 
-        <div className="space-y-1">
+        <div className="space-y-0.5">
           {templates.map(t => (
             <button
               key={t.id}
               onClick={() => onSelect(t.id)}
               className={cn(
-                "w-full text-left px-3 py-2.5 rounded-xl text-sm transition-smooth flex items-center space-x-3 group",
+                "w-full text-left px-2.5 py-2 rounded-lg text-sm transition-smooth flex items-center space-x-2.5",
                 selectedTemplate === t.id
-                  ? "bg-primary/15 text-white glow-purple border border-primary/20"
-                  : "text-zinc-400 hover:bg-white/[0.04] hover:text-zinc-200 border border-transparent"
+                  ? "bg-white/[0.08] text-white"
+                  : "text-zinc-500 hover:bg-white/[0.03] hover:text-zinc-300"
               )}
             >
-              <span className="text-base">{t.icon}</span>
-              <span className="font-medium">{t.name}</span>
-              {selectedTemplate === t.id && (
-                <span className="ml-auto w-1.5 h-1.5 rounded-full bg-primary" />
-              )}
+              <span className={cn(
+                "opacity-50",
+                selectedTemplate === t.id && "opacity-100"
+              )}>{t.icon}</span>
+              <span className="font-medium text-[13px]">{t.name}</span>
             </button>
           ))}
         </div>
       </div>
 
       {/* Footer */}
-      <div className="p-4 border-t border-border space-y-3">
-        <Link href="/how-to-use" className="flex items-center space-x-2 text-zinc-500 hover:text-zinc-300 transition-smooth text-sm px-3 py-2 rounded-lg hover:bg-white/[0.03]">
-          <BookOpen className="h-4 w-4" />
+      <div className="p-3 border-t border-border">
+        <Link href="/how-to-use" className="flex items-center space-x-2 text-zinc-600 hover:text-zinc-400 transition-smooth text-xs px-2.5 py-2 rounded-lg hover:bg-white/[0.03]">
+          <BookOpen className="h-3.5 w-3.5" />
           <span>How to Use</span>
         </Link>
-        <p className="text-[11px] text-zinc-600 px-3">
-          Templates from <code className="bg-white/[0.04] px-1.5 py-0.5 rounded text-zinc-500 text-[10px]">./templates</code>
-        </p>
       </div>
     </div>
   );

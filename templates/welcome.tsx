@@ -1,59 +1,54 @@
-
 import React from 'react';
 
-export default function WelcomeEmail({
-  headline = "Welcome to Our Service!",
-  body = "We are excited to have you on board. Explore our features and get started today.",
-  buttonText = "Get Started",
-  buttonLink = "#",
-  primaryColor = "#0070f3",
-  theme = "dark"
-}: any) {
+export const WelcomeTemplate = ({
+  headline = 'Welcome!',
+  body = 'Check out our latest updates. We are thrilled to have you as part of our community. Explore your dashboard to get started with our amazing features.',
+  buttonText = 'Get Started',
+  buttonLink = 'https://example.com',
+  theme = 'dark',
+  primaryColor = '#06b6d4',
+  headingAlign = 'center',
+  bodyAlign = 'center'
+}: any) => {
   const isDark = theme === 'dark';
 
   const styles = {
     container: {
       fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
-      backgroundColor: isDark ? "#0f172a" : "#f5f5f5",
+      backgroundColor: isDark ? "#09090b" : "#f5f5f5",
       padding: "40px 20px",
       textAlign: "center" as const,
     },
     card: {
-      backgroundColor: isDark ? "#1e293b" : "#ffffff",
+      backgroundColor: isDark ? "#111113" : "#ffffff",
       padding: "40px",
       borderRadius: "12px",
       maxWidth: "600px",
       margin: "0 auto",
-      boxShadow: isDark ? "0 4px 20px rgba(0,0,0,0.4)" : "0 2px 4px rgba(0,0,0,0.1)",
-      color: isDark ? "#e2e8f0" : "#333333",
-      border: isDark ? "1px solid rgba(255,255,255,0.05)" : "none",
+      boxShadow: isDark ? "0 10px 30px rgba(0,0,0,0.5)" : "0 4px 6px rgba(0,0,0,0.05)",
     },
     heading: {
-      fontSize: "24px",
-      fontWeight: "bold" as const,
+      color: isDark ? "#ffffff" : "#333333",
+      fontSize: "32px",
       marginBottom: "20px",
-      color: isDark ? "#f1f5f9" : "#111111",
+      textAlign: headingAlign as any,
     },
     text: {
-      fontSize: "16px",
+      color: isDark ? "#a1a1aa" : "#666666",
+      fontSize: "18px",
       lineHeight: "1.6",
       marginBottom: "30px",
-      color: isDark ? "#94a3b8" : "#333333",
+      textAlign: bodyAlign as any,
     },
     button: {
-      display: "inline-block" as const,
       backgroundColor: primaryColor,
       color: "#ffffff",
-      padding: "12px 24px",
-      borderRadius: "6px",
+      padding: "15px 30px",
+      borderRadius: "8px",
       textDecoration: "none",
-      fontWeight: "bold" as const,
-      fontSize: "16px",
-    },
-    footer: {
-      marginTop: "30px",
-      fontSize: "12px",
-      color: isDark ? "#475569" : "#888888",
+      fontSize: "18px",
+      fontWeight: "bold",
+      display: "inline-block",
     }
   };
 
@@ -62,11 +57,14 @@ export default function WelcomeEmail({
       <div style={styles.card}>
         <h1 style={styles.heading}>{headline}</h1>
         <p style={styles.text}>{body}</p>
-        <a href={buttonLink} style={styles.button}>{buttonText}</a>
-        <div style={styles.footer}>
-          <p>&copy; {new Date().getFullYear()} Your Company. All rights reserved.</p>
+        <div style={{ textAlign: bodyAlign as any }}>
+          <a href={buttonLink} style={styles.button}>
+            {buttonText}
+          </a>
         </div>
       </div>
     </div>
   );
-}
+};
+
+export default WelcomeTemplate;
