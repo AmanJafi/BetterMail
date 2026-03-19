@@ -1,143 +1,176 @@
 import React from 'react';
 
 export const NewsletterTemplate = ({
-  headline = 'Weekly Digest',
-  body = 'Here are the top stories this week. We have curated a list of our best articles just for you. Read on to stay informed about the latest industry trends and insights.',
+  headline = 'Insights & Trends for Q1 2025',
+  body = 'In this edition we cover the shift toward AI-augmented workflows, key product metrics to track this quarter, and practical advice from operators who\'ve scaled past 100 employees.',
   buttonText = 'Read Full Issue',
   buttonLink = 'https://example.com/newsletter',
   theme = 'dark',
   primaryColor = '#4f46e5',
-  mainTitle = 'The Weekly Insider',
-  issueInfo = 'ISSUE #42',
+  mainTitle = 'The Brief',
+  issueInfo = 'ISSUE #42 · MARCH 2025',
+  headerBadge = 'Newsletter',
   headingAlign = 'center',
   bodyAlign = 'center',
-  extraSectionTitle = 'In Case You Missed It',
-  extraContent = 'Five Tips for Better Productivity\nBoost your efficiency with these simple hacks.\n\nThe Future of Remote Work\nWhat does 2026 look like for digital nomads?'
+  extraSectionTitle = 'Also In This Issue',
+  extraContent = 'How to measure team productivity without micromanaging\nThe rise of vertical SaaS: opportunities and risks\nQ1 benchmarks: what good looks like for growth-stage startups',
+  footerNote = 'You are receiving this because you subscribed.',
 }: any) => {
   const isDark = theme === 'dark';
+  const td = (align: string) => align === 'right' ? 'right' : align === 'center' ? 'center' : 'left';
 
-  const colors = {
-    outerBg: isDark ? '#09090b' : '#f3f4f6',
-    cardBg: isDark ? '#111113' : '#ffffff',
-    headerBg: isDark ? '#1a1a1e' : primaryColor,
+  const c = {
+    outerBg:    isDark ? '#09090b' : '#f1f5f9',
+    cardBg:     isDark ? '#111113' : '#ffffff',
+    border:     isDark ? 'rgba(255,255,255,0.07)' : '#e2e8f0',
+    headerBg:   isDark ? '#18181b' : '#0f172a',
     headerText: '#ffffff',
-    headerSub: isDark ? '#71717a' : '#e0e7ff',
-    accentColor: primaryColor,
-    headingColor: isDark ? '#f1f5f9' : '#111827',
-    textColor: isDark ? '#94a3b8' : '#4b5563',
-    linkColor: isDark ? '#e2e8f0' : '#1f2937',
-    linkSub: isDark ? '#64748b' : '#6b7280',
-    dividerColor: isDark ? 'rgba(255,255,255,0.08)' : '#e5e7eb',
-    footerBg: isDark ? '#09090b' : '#1f2937',
-    footerText: isDark ? '#475569' : '#9ca3af',
-    footerLink: isDark ? '#94a3b8' : '#d1d5db',
-    shadow: isDark ? '0 4px 20px rgba(0,0,0,0.5)' : '0 4px 6px rgba(0,0,0,0.05)',
+    issuePill:  isDark ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.15)',
+    issueText:  isDark ? '#94a3b8' : '#cbd5e1',
+    heading:    isDark ? '#f8fafc' : '#0f172a',
+    bodyText:   isDark ? '#94a3b8' : '#475569',
+    itemColor:  isDark ? '#cbd5e1' : '#374151',
+    divider:    isDark ? 'rgba(255,255,255,0.06)' : '#e2e8f0',
+    footerBg:   isDark ? '#09090b' : '#f1f5f9',
+    footerText: isDark ? '#3f3f46' : '#94a3b8',
+    footerLink: isDark ? '#52525b' : '#9ca3af',
   };
 
-  // Split extraContent by newlines and filter out empty strings
-  const contentItems = extraContent ? extraContent.split('\n').filter((item: string) => item.trim() !== '') : [];
+  const items = extraContent
+    ? extraContent.split('\n').filter((s: string) => s.trim() !== '')
+    : [];
 
   return (
-    <div style={{ backgroundColor: colors.outerBg, fontFamily: 'Helvetica, Arial, sans-serif' }}>
-      <table width="100%" cellPadding="0" cellSpacing="0" border={0} style={{ backgroundColor: colors.outerBg, padding: '40px 0' }}>
+    <table width="100%" cellPadding="0" cellSpacing="0" border={0}
+      style={{ backgroundColor: c.outerBg, fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif", padding: '48px 20px' }}>
+      <tbody>
         <tr>
           <td align="center">
-            <table width="600" cellPadding="0" cellSpacing="0" border={0} style={{ backgroundColor: colors.cardBg, borderRadius: '12px', overflow: 'hidden', boxShadow: colors.shadow }}>
+            <table width="600" cellPadding="0" cellSpacing="0" border={0}
+              style={{ backgroundColor: c.cardBg, borderRadius: '8px', border: `1px solid ${c.border}` }}>
+              <tbody>
 
-              {/* Header */}
-              <tr>
-                <td style={{ backgroundColor: colors.headerBg, padding: '40px 20px', textAlign: 'center' }}>
-                  <h1 style={{ margin: '0', fontSize: '28px', color: colors.headerText, fontWeight: 'bold', letterSpacing: '-0.5px' }}>
-                    {mainTitle}
-                  </h1>
-                  <p style={{ margin: '10px 0 0 0', fontSize: '14px', color: colors.headerSub, textTransform: 'uppercase', letterSpacing: '2px' }}>
-                    {issueInfo}
-                  </p>
-                </td>
-              </tr>
+                {/* Header */}
+                <tr>
+                  <td style={{ backgroundColor: c.headerBg, padding: '32px 40px', borderRadius: '8px 8px 0 0' }}>
+                    <table width="100%" cellPadding="0" cellSpacing="0" border={0}>
+                      <tbody>
+                        <tr>
+                          <td>
+                            <p style={{ margin: '0 0 4px 0', fontSize: '26px', fontWeight: '800', color: c.headerText, letterSpacing: '-0.5px' }}>
+                              {mainTitle}
+                            </p>
+                            <p style={{ margin: '0', fontSize: '11px', color: c.issueText, letterSpacing: '1.5px', textTransform: 'uppercase' as const }}>
+                              {issueInfo}
+                            </p>
+                          </td>
+                          <td align="right" valign="bottom">
+                            <span style={{ display: 'inline-block', padding: '5px 12px', backgroundColor: c.issuePill, borderRadius: '20px', fontSize: '11px', fontWeight: '600', color: '#ffffff', letterSpacing: '0.5px' }}>
+                              {headerBadge}
+                            </span>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </td>
+                </tr>
 
-              {/* Main Feature */}
-              <tr>
-                <td style={{ padding: '40px 40px 20px 40px' }}>
-                  <span style={{ fontSize: '12px', fontWeight: 'bold', color: colors.accentColor, textTransform: 'uppercase', letterSpacing: '1px', display: 'block', textAlign: headingAlign }}>
-                    FEATURED STORY
-                  </span>
-                  <h2 style={{ margin: '10px 0 15px 0', fontSize: '24px', color: colors.headingColor, fontWeight: 'bold', lineHeight: '1.3', textAlign: headingAlign }}>
-                    {headline}
-                  </h2>
-                  <div style={{ margin: '0 0 25px 0', fontSize: '16px', lineHeight: '1.6', color: colors.textColor, textAlign: bodyAlign }}>
-                    {body}
-                  </div>
-                  <table width="100%" cellPadding="0" cellSpacing="0" border={0}>
+                {/* Feature label */}
+                <tr>
+                  <td style={{ padding: '32px 40px 0 40px', textAlign: td(headingAlign) as any }}>
+                    <span style={{ fontSize: '11px', fontWeight: '700', color: primaryColor, letterSpacing: '1.5px', textTransform: 'uppercase' as const }}>
+                      Feature Story
+                    </span>
+                  </td>
+                </tr>
+
+                {/* Headline */}
+                <tr>
+                  <td style={{ padding: '10px 40px 0 40px' }}>
+                    <h1 style={{ margin: '0', fontSize: '23px', fontWeight: '700', color: c.heading, lineHeight: '1.35', letterSpacing: '-0.2px', textAlign: td(headingAlign) as any }}>
+                      {headline}
+                    </h1>
+                  </td>
+                </tr>
+
+                {/* Body */}
+                <tr>
+                  <td style={{ padding: '16px 40px 0 40px' }}>
+                    <p style={{ margin: '0', fontSize: '15px', lineHeight: '1.75', color: c.bodyText, textAlign: td(bodyAlign) as any }}>
+                      {body}
+                    </p>
+                  </td>
+                </tr>
+
+                {/* CTA */}
+                <tr>
+                  <td style={{ padding: '24px 40px 36px 40px' }}>
+                    <table width="100%" cellPadding="0" cellSpacing="0" border={0}>
+                      <tbody>
+                        <tr>
+                          <td align={td(bodyAlign)}>
+                            <a href={buttonLink} style={{ display: 'inline-block', padding: '12px 22px', backgroundColor: primaryColor, color: '#ffffff', textDecoration: 'none', borderRadius: '6px', fontWeight: '600', fontSize: '14px' }}>
+                              {buttonText} →
+                            </a>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </td>
+                </tr>
+
+                {/* Secondary section */}
+                {items.length > 0 && (
+                  <>
                     <tr>
-                      <td align={bodyAlign === 'center' ? 'center' : bodyAlign === 'right' ? 'right' : 'left'}>
-                        <a href={buttonLink} style={{ display: 'inline-block', padding: '12px 24px', background: colors.accentColor, color: '#ffffff', textDecoration: 'none', borderRadius: '6px', fontWeight: '600', fontSize: '14px' }}>
-                          {buttonText} →
-                        </a>
+                      <td style={{ height: '1px', backgroundColor: c.divider }} />
+                    </tr>
+                    <tr>
+                      <td style={{ padding: '28px 40px 36px 40px' }}>
+                        <p style={{ margin: '0 0 16px 0', fontSize: '11px', fontWeight: '700', color: primaryColor, letterSpacing: '1.5px', textTransform: 'uppercase' as const, textAlign: td(headingAlign) as any }}>
+                          {extraSectionTitle}
+                        </p>
+                        <table width="100%" cellPadding="0" cellSpacing="0" border={0}>
+                          <tbody>
+                            {items.map((item: string, i: number) => (
+                              <tr key={i}>
+                                <td valign="top" width="28" style={{ fontSize: '13px', fontWeight: '700', color: primaryColor, paddingBottom: '14px', paddingTop: '1px' }}>
+                                  {String(i + 1).padStart(2, '0')}.
+                                </td>
+                                <td style={{ fontSize: '14px', lineHeight: '1.6', color: c.itemColor, paddingBottom: '14px' }}>
+                                  {item}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
                       </td>
                     </tr>
-                  </table>
-                </td>
-              </tr>
+                  </>
+                )}
 
-              {/* Extra Content Section */}
-              {contentItems.length > 0 && (
-                <>
-                  <tr>
-                    <td style={{ padding: '0 40px' }}>
-                      <div style={{ height: '1px', backgroundColor: colors.dividerColor, margin: '10px 0' }}></div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td style={{ padding: '20px 40px 40px 40px' }}>
-                      <h3 style={{ margin: '0 0 20px 0', fontSize: '18px', color: colors.headingColor, fontWeight: 'bold', textAlign: bodyAlign }}>
-                        {extraSectionTitle}
-                      </h3>
+                {/* Footer */}
+                <tr>
+                  <td style={{ backgroundColor: c.footerBg, padding: '22px 40px', textAlign: 'center' as const, borderTop: `1px solid ${c.divider}`, borderRadius: '0 0 8px 8px' }}>
+                    <p style={{ margin: '0 0 6px 0', fontSize: '12px', color: c.footerText }}>
+                      {footerNote}
+                    </p>
+                    <p style={{ margin: '0', fontSize: '12px', color: c.footerText }}>
+                      <a href="#" style={{ color: c.footerLink, textDecoration: 'underline' }}>Unsubscribe</a>
+                      {' · '}
+                      <a href="#" style={{ color: c.footerLink, textDecoration: 'underline' }}>View in Browser</a>
+                      {' · '}
+                      <a href="#" style={{ color: c.footerLink, textDecoration: 'underline' }}>Manage Preferences</a>
+                    </p>
+                  </td>
+                </tr>
 
-                      <table width="100%" cellPadding="0" cellSpacing="0" border={0}>
-                        {contentItems.map((item: string, index: number) => (
-                          <tr key={index}>
-                            <td style={{ paddingBottom: '15px' }}>
-                              <table width="100%" cellPadding="0" cellSpacing="0" border={0}>
-                                <tr>
-                                  <td width="24" valign="top" style={{ color: colors.accentColor, fontSize: '16px', fontWeight: 'bold', textAlign: 'left' }}>
-                                    {index + 1}.
-                                  </td>
-                                  <td style={{
-                                    fontSize: '15px',
-                                    lineHeight: '1.5',
-                                    color: colors.textColor,
-                                    textAlign: 'left'
-                                  }}>
-                                    {item}
-                                  </td>
-                                </tr>
-                              </table>
-                            </td>
-                          </tr>
-                        ))}
-                      </table>
-                    </td>
-                  </tr>
-                </>
-              )}
-
-              {/* Footer */}
-              <tr>
-                <td style={{ backgroundColor: colors.footerBg, padding: '30px 40px', textAlign: 'center', color: colors.footerText, fontSize: '12px' }}>
-                  <p style={{ margin: '0 0 10px 0' }}>You received this email because you signed up for our weekly newsletter.</p>
-                  <p style={{ margin: '0' }}>
-                    <a href="#" style={{ color: colors.footerLink, textDecoration: 'underline' }}>Unsubscribe</a> •
-                    <a href="#" style={{ color: colors.footerLink, textDecoration: 'underline', marginLeft: '10px' }}>View in Browser</a>
-                  </p>
-                </td>
-              </tr>
-
+              </tbody>
             </table>
           </td>
         </tr>
-      </table>
-    </div>
+      </tbody>
+    </table>
   );
 };
 

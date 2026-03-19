@@ -4,10 +4,15 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import Sidebar from './components/sidebar/Sidebar';
 import Editor from './components/editor/Editor';
+import CustomEditor from './components/editor/CustomEditor';
 import Preview from './components/preview/Preview';
+import CustomTemplatePanel from './components/custom/CustomTemplatePanel';
 import { Toaster } from 'sonner';
-import { templatesRegistry } from './lib/templates-registry';
+import { templatesRegistry, registerTemplate } from './lib/templates-registry';
 import { renderOnClient } from '@/lib/client-renderer';
+import { detectTemplateProps } from '@/lib/detect-template-props';
+
+const CUSTOM_TEMPLATE_ID = '__custom__';
 
 export default function Home() {
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
@@ -15,6 +20,7 @@ export default function Home() {
   const [htmlOutput, setHtmlOutput] = useState<string>('');
   const [warnings, setWarnings] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  const [customComponent, setCustomComponent] = useState<React.ComponentType<any> | null>(null);
   const renderTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleRender = useCallback(async (templateId: string, props: any) => {
@@ -34,7 +40,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (selectedTemplate) {
+    if (selectedTemplate && selectedTemplate !== 'custom') {
       let defaultProps: any = {};
 
       const commonDefaults = {
@@ -55,59 +61,112 @@ export default function Home() {
           logoUrl: '/logo.jpeg',
           primaryColor: '#ffffff'
         };
+      } else if (selectedTemplate === 'announcement.tsx') {
+        defaultProps = {
+          ...commonDefaults,
+          headline: 'Introducing Our Latest Platform Update',
+          body: 'We\'ve shipped a significant update to our platform. Explore what\'s new.',
+          buttonText: 'Read the Release Notes',
+          buttonLink: '#',
+          primaryColor: '#6366f1',
+          companyName: 'Acme',
+          headerTag: 'Product Update',
+          calloutText: 'This update is available to all users effective immediately. No action is required on your end.',
+          footerCompany: 'Acme Corp, Inc.',
+          footerAddress: '100 Market Street, San Francisco, CA 94105',
+        };
       } else if (selectedTemplate === 'newsletter.tsx') {
         defaultProps = {
           ...commonDefaults,
-          mainTitle: 'The Weekly Insider',
-          issueInfo: 'ISSUE #42',
-          headline: 'Weekly Digest',
-          body: 'Here are the top stories this week.',
+          mainTitle: 'The Brief',
+          issueInfo: 'ISSUE #42 · MARCH 2025',
+          headerBadge: 'Newsletter',
+          headline: 'Insights & Trends for Q1 2025',
+          body: 'In this edition we cover AI-augmented workflows, key metrics to track this quarter, and advice from operators who\'ve scaled past 100 employees.',
           buttonText: 'Read Full Issue',
           buttonLink: 'https://example.com/newsletter',
-          extraSectionTitle: 'In Case You Missed It',
-          extraContent: 'Five Tips for Better Productivity\nThe Future of Remote Work\nDesign Systems for Beginners'
+          extraSectionTitle: 'Also In This Issue',
+          extraContent: 'How to measure team productivity without micromanaging\nThe rise of vertical SaaS: opportunities and risks\nQ1 benchmarks: what good looks like for growth-stage startups',
+          footerNote: 'You are receiving this because you subscribed.',
+          primaryColor: '#4f46e5',
         };
       } else if (selectedTemplate === 'transactional.tsx') {
         defaultProps = {
           ...commonDefaults,
-          headline: 'Payment Confirmation',
-          body: 'Your payment has been successfully processed.',
+          headline: 'Payment Confirmed',
+          body: 'Thank you for your purchase. Your payment has been processed successfully.',
           invoiceId: '#INV-2024-001',
-          invoiceDate: 'Oct 24, 2024',
+          invoiceDate: 'October 24, 2024',
           totalAmount: '$49.00',
           buttonText: 'View Invoice',
           buttonLink: 'https://example.com/invoice',
-          primaryColor: '#10b981'
+          primaryColor: '#10b981',
+          companyName: 'Acme',
+          statusBadge: '✓ Payment Successful',
+          footerCompany: 'Acme Corp, Inc.',
+          footerAddress: '100 Market Street, San Francisco, CA 94105',
         };
       } else {
         defaultProps = {
           ...commonDefaults,
-          headline: 'Welcome!',
-          body: 'Check out our latest updates.',
+          headline: 'Welcome to Acme Corp',
+          body: 'Your account is ready. We\'re excited to have you on board. Explore your dashboard to discover tools built to help your team move faster.',
           buttonText: 'Get Started',
           buttonLink: 'https://example.com',
-          primaryColor: '#06b6d4'
+          primaryColor: '#06b6d4',
+          companyName: 'Acme',
+          tagline: 'Welcome',
+          footerCompany: 'Acme Corp, Inc.',
+          footerAddress: '100 Market Street, Suite 300, San Francisco, CA 94105',
         };
       }
       setTemplateProps(defaultProps);
       handleRender(selectedTemplate, defaultProps);
+    }
+
+    // Switching to 'custom' clears the preview until user selects a variation
+    if (selectedTemplate === 'custom') {
+      setHtmlOutput('');
+      setWarnings([]);
     }
   }, [selectedTemplate, handleRender]);
 
   const handlePropsChange = (newProps: any) => {
     setTemplateProps(newProps);
 
-    // Clear existing timeout to debounce
-    if (renderTimeoutRef.current) {
-      clearTimeout(renderTimeoutRef.current);
-    }
+    if (renderTimeoutRef.current) clearTimeout(renderTimeoutRef.current);
 
-    // Set a new timeout (300ms is standard for responsive feel)
     renderTimeoutRef.current = setTimeout(() => {
-      if (selectedTemplate) handleRender(selectedTemplate, newProps);
+      const activeId = selectedTemplate === 'custom' ? CUSTOM_TEMPLATE_ID : selectedTemplate;
+      if (activeId) handleRender(activeId, newProps);
       renderTimeoutRef.current = null;
     }, 300);
   };
+
+  // Called when user picks a variation from CustomTemplatePanel
+  const handleCustomVariationSelected = useCallback((component: React.ComponentType<any>) => {
+    registerTemplate(CUSTOM_TEMPLATE_ID, component);
+    setCustomComponent(() => component);
+
+    // Detect all props the component uses and seed initial values
+    const detected = detectTemplateProps(component as (p: any) => any);
+    const initialProps: Record<string, string> = {};
+    detected.forEach(({ key }) => {
+      const k = key.toLowerCase();
+      if (k === 'theme') initialProps[key] = 'dark';
+      else if (k.includes('color') || k.includes('colour')) initialProps[key] = '#4f46e5';
+      else if (k === 'headingalign' || k === 'bodyalign') initialProps[key] = 'center';
+      else if (k.includes('link') || k.includes('url')) initialProps[key] = 'https://example.com';
+      else initialProps[key] = '';
+    });
+
+    setTemplateProps(initialProps);
+    handleRender(CUSTOM_TEMPLATE_ID, initialProps);
+  }, [handleRender]);
+
+  const isCustomMode = selectedTemplate === 'custom';
+  const activeTemplateId = isCustomMode ? CUSTOM_TEMPLATE_ID : selectedTemplate;
+  const hasCustomComponent = !!templatesRegistry[CUSTOM_TEMPLATE_ID];
 
   return (
     <main className="flex h-screen overflow-hidden bg-[#09090b]">
@@ -129,13 +188,30 @@ export default function Home() {
       />
 
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
-        {/* Editor */}
+        {/* Editor / Custom Panel */}
         <div className="w-full md:w-[320px] border-r border-border p-4 overflow-y-auto bg-[#0c0c0e]">
-          <Editor
-            selectedTemplate={selectedTemplate}
-            props={templateProps}
-            onChange={handlePropsChange}
-          />
+          {isCustomMode ? (
+            <CustomTemplatePanel
+              onSelectVariation={(component) => handleCustomVariationSelected(component)}
+            />
+          ) : (
+            <Editor
+              selectedTemplate={selectedTemplate}
+              props={templateProps}
+              onChange={handlePropsChange}
+            />
+          )}
+
+          {/* After user applies a custom template, show the auto-detected editor */}
+          {isCustomMode && hasCustomComponent && htmlOutput && customComponent && (
+            <div className="mt-5 border-t border-border pt-5">
+              <CustomEditor
+                component={customComponent}
+                props={templateProps}
+                onChange={handlePropsChange}
+              />
+            </div>
+          )}
         </div>
 
         {/* Preview */}

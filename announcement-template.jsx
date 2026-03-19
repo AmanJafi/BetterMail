@@ -40,8 +40,7 @@ const AnnouncementTemplate = () => {
                   <td width="50%" style="background: linear-gradient(to right, transparent, #06b6d4, transparent); height: 2px;"></td>
                   <td width="25%" style="background: linear-gradient(to right, transparent, #facc15, transparent); height: 2px;"></td>
                 </tr>
-              </table>
-            </td>
+but            </td>
           </tr>
           
           <!-- Main Content -->

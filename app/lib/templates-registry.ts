@@ -5,7 +5,7 @@ import Newsletter from '@/templates/newsletter';
 import Transactional from '@/templates/transactional';
 import Welcome from '@/templates/welcome';
 
-// Using static imports for the registry ensures that all templates are available 
+// Using static imports for the registry ensures that all templates are available
 // immediately for client-side rendering without additional network requests for chunks.
 
 export const templatesRegistry: Record<string, any> = {
@@ -17,3 +17,8 @@ export const templatesRegistry: Record<string, any> = {
 };
 
 export const templateNames = Object.keys(templatesRegistry);
+
+/** Dynamically register a component (e.g. AI-generated) into the live registry. */
+export function registerTemplate(id: string, component: any) {
+  templatesRegistry[id] = component;
+}

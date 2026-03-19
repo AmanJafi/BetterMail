@@ -2,7 +2,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Mail, FileText, BookOpen, Megaphone, Gem, Newspaper, CreditCard, HandMetal } from 'lucide-react';
+import { Mail, FileText, BookOpen, Megaphone, Gem, Newspaper, CreditCard, HandMetal, Code2 } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { templateNames } from '@/app/lib/templates-registry';
@@ -77,6 +77,25 @@ export default function Sidebar({
               <span className="font-medium text-[13px]">{t.name}</span>
             </button>
           ))}
+        </div>
+
+        {/* Custom Template (paste code) */}
+        <div className="mt-3">
+          <div className="h-px bg-border mb-3" />
+          <button
+            onClick={() => onSelect('custom')}
+            className={cn(
+              "w-full text-left px-2.5 py-2 rounded-lg text-sm transition-smooth flex items-center space-x-2.5",
+              selectedTemplate === 'custom'
+                ? "bg-white/[0.08] text-white"
+                : "text-zinc-500 hover:bg-white/[0.03] hover:text-zinc-300"
+            )}
+          >
+            <span className={cn("opacity-50", selectedTemplate === 'custom' && "opacity-100")}>
+              <Code2 className="h-4 w-4" />
+            </span>
+            <span className="font-medium text-[13px]">Custom Template</span>
+          </button>
         </div>
       </div>
 

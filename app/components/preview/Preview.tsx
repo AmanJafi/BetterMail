@@ -93,6 +93,23 @@ export default function Preview({ html, loading, warnings }: PreviewProps) {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [copyRenderedHtml]);
 
+  // Write HTML directly into the existing iframe document instead of
+  // reassigning `srcDoc`. Reassigning srcDoc causes the browser to destroy
+  // and recreate the entire iframe document, which produces the visible
+  // flash/jitter. document.write() updates content in-place with no teardown.
+  useEffect(() => {
+    if (!html || viewMode !== 'preview') return;
+    const iframe = iframeRef.current;
+    if (!iframe) return;
+
+    const doc = iframe.contentDocument || iframe.contentWindow?.document;
+    if (!doc) return;
+
+    doc.open();
+    doc.write(html);
+    doc.close();
+  }, [html, viewMode]);
+
   return (
     <div className="w-full max-w-5xl flex flex-col h-full fade-in">
       {/* Toolbar */}
@@ -190,10 +207,9 @@ export default function Preview({ html, loading, warnings }: PreviewProps) {
           </div>
         )}
 
-        {html && viewMode === 'preview' && (
+        {viewMode === 'preview' && (
           <iframe
             ref={iframeRef}
-            srcDoc={html}
             className="w-full h-full border-0"
             sandbox="allow-same-origin"
             title="Email Preview"
