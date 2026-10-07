@@ -27,7 +27,7 @@ export default function CustomTemplatePanel({ value, onChange }: CustomTemplateP
       <div className="flex items-start justify-between gap-3">
         <div>
           <h2 className="text-sm font-semibold text-zinc-200 mb-0.5">Custom Template</h2>
-          <p className="text-xs text-zinc-600">Paste any HTML email and see it live.</p>
+          <p className="text-xs text-zinc-600">Paste HTML or a React email template and see it live.</p>
         </div>
         <FileCode2 className="h-4 w-4 text-zinc-600" />
       </div>
@@ -46,7 +46,7 @@ export default function CustomTemplatePanel({ value, onChange }: CustomTemplateP
         <div className="flex items-center justify-between border-b border-border px-3 py-2">
           <div className="flex items-center gap-2">
             <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
-            <span className="text-[10px] font-semibold tracking-widest text-zinc-500">HTML SOURCE</span>
+            <span className="text-[10px] font-semibold tracking-widest text-zinc-500">SOURCE</span>
             <span className="text-[10px] text-zinc-700">{value ? `${value.split('\n').length} lines` : 'empty'}</span>
           </div>
           <span className="text-[10px] text-emerald-500/70">live</span>

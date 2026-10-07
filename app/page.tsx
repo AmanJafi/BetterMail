@@ -9,6 +9,7 @@ import CustomTemplatePanel from './components/custom/CustomTemplatePanel';
 import { Toaster } from 'sonner';
 import { templatesRegistry } from './lib/templates-registry';
 import { renderOnClient, renderRawHtmlOnClient } from '@/lib/client-renderer';
+import { evalTemplate } from '@/lib/template-eval';
 
 export default function Home() {
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
@@ -147,7 +148,21 @@ export default function Home() {
       return;
     }
     try {
-      const { html, warnings } = await renderRawHtmlOnClient(source);
+      const code = source.trim().replace(/^```(?:javascript|js|jsx|tsx|typescript)?\s*/i, '').replace(/```\s*$/i, '');
+      let html: string;
+      let warnings: string[];
+
+      // Custom mode accepts both standalone HTML and the React.createElement
+      // template format used by the earlier custom-template workflow.
+      if (/function\s+EmailTemplate\s*\(/.test(code) && code.includes('React.createElement')) {
+        const Component = evalTemplate(code);
+        if (!Component) throw new Error('Could not evaluate the React email template.');
+        const rendered = await renderOnClient(Component, {});
+        ({ html, warnings } = await renderRawHtmlOnClient(rendered.html));
+        warnings = [...new Set([...rendered.warnings, ...warnings])];
+      } else {
+        ({ html, warnings } = await renderRawHtmlOnClient(source));
+      }
       setHtmlOutput(html);
       setWarnings(warnings);
     } catch (error) {
