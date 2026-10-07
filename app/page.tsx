@@ -4,15 +4,11 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import Sidebar from './components/sidebar/Sidebar';
 import Editor from './components/editor/Editor';
-import CustomEditor from './components/editor/CustomEditor';
 import Preview from './components/preview/Preview';
 import CustomTemplatePanel from './components/custom/CustomTemplatePanel';
 import { Toaster } from 'sonner';
-import { templatesRegistry, registerTemplate } from './lib/templates-registry';
-import { renderOnClient } from '@/lib/client-renderer';
-import { detectTemplateProps } from '@/lib/detect-template-props';
-
-const CUSTOM_TEMPLATE_ID = '__custom__';
+import { templatesRegistry } from './lib/templates-registry';
+import { renderOnClient, renderRawHtmlOnClient } from '@/lib/client-renderer';
 
 export default function Home() {
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
@@ -20,7 +16,7 @@ export default function Home() {
   const [htmlOutput, setHtmlOutput] = useState<string>('');
   const [warnings, setWarnings] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
-  const [customComponent, setCustomComponent] = useState<React.ComponentType<any> | null>(null);
+  const [customHtml, setCustomHtml] = useState('');
   const renderTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleRender = useCallback(async (templateId: string, props: any) => {
@@ -124,10 +120,11 @@ export default function Home() {
       handleRender(selectedTemplate, defaultProps);
     }
 
-    // Switching to 'custom' clears the preview until user selects a variation
+    // Switching to 'custom' starts a fresh raw HTML template.
     if (selectedTemplate === 'custom') {
       setHtmlOutput('');
       setWarnings([]);
+      setCustomHtml('');
     }
   }, [selectedTemplate, handleRender]);
 
@@ -137,37 +134,28 @@ export default function Home() {
     if (renderTimeoutRef.current) clearTimeout(renderTimeoutRef.current);
 
     renderTimeoutRef.current = setTimeout(() => {
-      const activeId = selectedTemplate === 'custom' ? CUSTOM_TEMPLATE_ID : selectedTemplate;
-      if (activeId) handleRender(activeId, newProps);
+      if (selectedTemplate && selectedTemplate !== 'custom') handleRender(selectedTemplate, newProps);
       renderTimeoutRef.current = null;
     }, 300);
   };
 
-  // Called when user picks a variation from CustomTemplatePanel
-  const handleCustomVariationSelected = useCallback((component: React.ComponentType<any>) => {
-    registerTemplate(CUSTOM_TEMPLATE_ID, component);
-    setCustomComponent(() => component);
-
-    // Detect all props the component uses and seed initial values
-    const detected = detectTemplateProps(component as (p: any) => any);
-    const initialProps: Record<string, string> = {};
-    detected.forEach(({ key }) => {
-      const k = key.toLowerCase();
-      if (k === 'theme') initialProps[key] = 'dark';
-      else if (k.includes('color') || k.includes('colour')) initialProps[key] = '#4f46e5';
-      else if (k === 'headingalign' || k === 'bodyalign') initialProps[key] = 'center';
-      else if (k.includes('link') || k.includes('url')) initialProps[key] = 'https://example.com';
-      else initialProps[key] = '';
-    });
-
-    setTemplateProps(initialProps);
-    handleRender(CUSTOM_TEMPLATE_ID, initialProps);
-  }, [handleRender]);
+  const handleCustomHtmlChange = useCallback(async (source: string) => {
+    setCustomHtml(source);
+    if (!source.trim()) {
+      setHtmlOutput('');
+      setWarnings([]);
+      return;
+    }
+    try {
+      const { html, warnings } = await renderRawHtmlOnClient(source);
+      setHtmlOutput(html);
+      setWarnings(warnings);
+    } catch (error) {
+      console.error('Pasted HTML rendering failed', error);
+    }
+  }, []);
 
   const isCustomMode = selectedTemplate === 'custom';
-  const activeTemplateId = isCustomMode ? CUSTOM_TEMPLATE_ID : selectedTemplate;
-  const hasCustomComponent = !!templatesRegistry[CUSTOM_TEMPLATE_ID];
-
   return (
     <main className="flex h-screen overflow-hidden bg-[#09090b]">
       <Toaster
@@ -192,7 +180,8 @@ export default function Home() {
         <div className="w-full md:w-[320px] border-r border-border p-4 overflow-y-auto bg-[#0c0c0e]">
           {isCustomMode ? (
             <CustomTemplatePanel
-              onSelectVariation={(component) => handleCustomVariationSelected(component)}
+              value={customHtml}
+              onChange={handleCustomHtmlChange}
             />
           ) : (
             <Editor
@@ -202,16 +191,6 @@ export default function Home() {
             />
           )}
 
-          {/* After user applies a custom template, show the auto-detected editor */}
-          {isCustomMode && hasCustomComponent && htmlOutput && customComponent && (
-            <div className="mt-5 border-t border-border pt-5">
-              <CustomEditor
-                component={customComponent}
-                props={templateProps}
-                onChange={handlePropsChange}
-              />
-            </div>
-          )}
         </div>
 
         {/* Preview */}
