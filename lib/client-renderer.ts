@@ -140,12 +140,11 @@ export async function renderRawHtmlOnClient(source: string): Promise<Sanitizatio
     }
   });
 
-  const doctype = '<!DOCTYPE html>';
-  const inlinedHtml = juice(doctype + doc.documentElement.outerHTML, {
-    applyStyleTags: true,
-    removeStyleTags: true,
-    preserveMediaQueries: true,
-  });
-
-  return sanitizeOnClient(inlinedHtml, true);
+  // Keep the custom document untouched beyond the centering wrapper. Do not
+  // sanitize, inline, strip tags, or remove attributes: custom mode is meant
+  // to render and copy whatever HTML the user supplies.
+  return {
+    html: '<!DOCTYPE html>' + doc.documentElement.outerHTML,
+    warnings: [],
+  };
 }
